@@ -9,8 +9,8 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/doctrine-bundle": "^3.2",
-        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/doctrine-bundle": "^2.13",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.6",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
@@ -29,7 +29,10 @@
             "symfony/flex": true,
             "symfony/runtime": true
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "8.3.23"
+        }
     },
     "autoload": {
         "psr-4": {
