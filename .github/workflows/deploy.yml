@@ -81,6 +81,7 @@ jobs:
             "BASE_PATH='$BASE_PATH' RELEASE='$RELEASE' PHP_BIN='${PHP_BIN:-php}' bash -s" <<'REMOTE'
           set -euo pipefail
           cd "$BASE_PATH"
+          BASE_DIR="$PWD"   # chemin ABSOLU (BASE_PATH est relatif au home)
 
           # .env.local partagé (créé une seule fois à la main — voir DEPLOY.md)
           if [ ! -f shared/.env.local ]; then
@@ -95,7 +96,7 @@ jobs:
           "$PHP_BIN" bin/console cache:warmup --env=prod
 
           # Bascule atomique du symlink "current"
-          cd "$BASE_PATH"
+          cd "$BASE_DIR"
           ln -sfn "releases/$RELEASE" current.new
           mv -Tf current.new current
 
