@@ -1,0 +1,117 @@
+name: Déploiement OVH (production)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Jamais deux déploiements en parallèle ; on n'annule pas celui en cours
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & déploiement
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: ctype, iconv, intl, pdo_pgsql
+          tools: composer:v2
+          coverage: none
+
+      - name: Validation composer
+        run: composer validate --strict --no-check-publish
+
+      - name: Installation des dépendances (prod)
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-scripts
+
+      - name: Lint des templates et du conteneur
+        env:
+          APP_ENV: prod
+          APP_SECRET: ci-only-not-a-real-secret
+          DATABASE_URL: 'postgresql://ci:ci@127.0.0.1:5432/ci?serverVersion=16&charset=utf8'
+          MAILER_DSN: 'null://null'
+        run: |
+          php bin/console lint:twig templates --env=prod
+          php bin/console lint:yaml config --parse-tags
+          php bin/console lint:container --env=prod
+
+      - name: Clé SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.OVH_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.OVH_SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Envoi de la release (rsync)
+        env:
+          SSH_HOST: ${{ secrets.OVH_SSH_HOST }}
+          SSH_USER: ${{ secrets.OVH_SSH_USER }}
+          BASE_PATH: ${{ vars.OVH_BASE_PATH }}
+        run: |
+          RELEASE="${GITHUB_SHA::12}"
+          echo "RELEASE=$RELEASE" >> "$GITHUB_ENV"
+          ssh -i ~/.ssh/id_deploy "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '$BASE_PATH/releases/$RELEASE' '$BASE_PATH/shared'"
+          rsync -az \
+            --exclude '.git*' \
+            --exclude 'var/' \
+            --exclude '.env.local' \
+            --exclude 'tests/' \
+            -e 'ssh -i ~/.ssh/id_deploy' \
+            ./ "$SSH_USER@$SSH_HOST:$BASE_PATH/releases/$RELEASE/"
+
+      - name: Activation (migrations, cache, bascule atomique, purge)
+        env:
+          SSH_HOST: ${{ secrets.OVH_SSH_HOST }}
+          SSH_USER: ${{ secrets.OVH_SSH_USER }}
+          BASE_PATH: ${{ vars.OVH_BASE_PATH }}
+          PHP_BIN: ${{ vars.OVH_PHP_BIN }}
+        run: |
+          ssh -i ~/.ssh/id_deploy "$SSH_USER@$SSH_HOST" \
+            "BASE_PATH='$BASE_PATH' RELEASE='$RELEASE' PHP_BIN='${PHP_BIN:-php}' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$BASE_PATH"
+
+          # .env.local partagé (créé une seule fois à la main — voir DEPLOY.md)
+          if [ ! -f shared/.env.local ]; then
+            echo "ERREUR : $BASE_PATH/shared/.env.local est absent." >&2
+            exit 1
+          fi
+          ln -sfn "$PWD/shared/.env.local" "releases/$RELEASE/.env.local"
+
+          cd "releases/$RELEASE"
+          "$PHP_BIN" bin/console doctrine:migrations:migrate --no-interaction --env=prod
+          "$PHP_BIN" bin/console cache:clear --env=prod
+          "$PHP_BIN" bin/console cache:warmup --env=prod
+
+          # Bascule atomique du symlink "current"
+          cd "$BASE_PATH"
+          ln -sfn "releases/$RELEASE" current.new
+          mv -Tf current.new current
+
+          # Conserver les 3 dernières releases
+          ls -1dt releases/*/ | tail -n +4 | xargs -r rm -rf
+          echo "Déployé : $RELEASE"
+          REMOTE
+
+      - name: Vérification post-déploiement
+        env:
+          HEALTH_URL: ${{ vars.HEALTHCHECK_URL }}
+        run: |
+          if [ -n "$HEALTH_URL" ]; then
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$HEALTH_URL")
+            echo "GET $HEALTH_URL → $code"
+            [ "$code" = "200" ] || exit 1
+          else
+            echo "HEALTHCHECK_URL non défini — vérification sautée."
+          fi

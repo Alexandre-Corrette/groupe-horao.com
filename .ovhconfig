@@ -1,0 +1,8 @@
+# Configuration hébergement mutualisé OVH.
+# ⚠ Ce fichier doit être placé UNE FOIS à la racine du stockage FTP
+#   (au même niveau que le dossier www/), pas dans le dossier du projet.
+app.engine=php
+app.engine.version=8.3
+http.firewall=none
+environment=production
+container.image=stable64

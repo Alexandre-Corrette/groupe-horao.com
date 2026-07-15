@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            # Les adresses e-mail ne vivent qu'en configuration serveur (.env / env réelles)
+            string $contactTo: '%env(CONTACT_TO)%'
+            string $contactFrom: '%env(CONTACT_FROM)%'
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Dto/'
+            - '../src/Kernel.php'

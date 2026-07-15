@@ -1,0 +1,7 @@
+twig:
+    file_name_pattern: '*.twig'
+    # L'autoescape HTML est actif par défaut : toute variable affichée est échappée.
+
+when@prod:
+    twig:
+        strict_variables: false

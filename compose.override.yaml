@@ -1,0 +1,22 @@
+
+services:
+###> symfony/mailer ###
+  mailer:
+    image: axllent/mailpit
+    ports:
+      - "1025"
+      - "8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+###< symfony/mailer ###
+
+###> doctrine/doctrine-bundle ###
+  database:
+    environment:
+      # Aligné sur DATABASE_URL (.env) : base groupe_horao
+      POSTGRES_DB: ${POSTGRES_DB:-groupe_horao}
+    ports:
+      # Port hôte fixe pour matcher DATABASE_URL (127.0.0.1:5432)
+      - "127.0.0.1:5432:5432"
+###< doctrine/doctrine-bundle ###

@@ -1,0 +1,30 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    http_method_override: false
+    handle_all_throwables: true
+
+    # CSRF : indispensable pour le formulaire de contact
+    csrf_protection: true
+
+    # Session requise pour le stockage des jetons CSRF
+    session:
+        handler_id: null
+        cookie_secure: auto      # cookies Secure dès que HTTPS
+        cookie_samesite: lax
+        cookie_httponly: true
+
+    php_errors:
+        log: true
+
+    # Anti-flood : 3 envois / heure / IP (fenêtre glissante)
+    rate_limiter:
+        contact_form:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+            lock_factory: null
+
+when@prod:
+    framework:
+        session:
+            cookie_secure: true

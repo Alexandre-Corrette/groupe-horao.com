@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Cache and logs (Symfony2)
 /app/cache/*
 /app/logs/*
@@ -50,3 +51,23 @@
 
 # Embedded web-server pid file
 /.web-server-pid
+=======
+/vendor/
+/var/
+.env.local
+.env.local.php
+.env.*.local
+/public/bundles/
+.phpunit.result.cache
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+_to_delete_*
+>>>>>>> 18cfe80 (Initial commit — backend Symfony Mercure-IA (formulaire contact sécurisé, PostgreSQL, déploiement OVH))
