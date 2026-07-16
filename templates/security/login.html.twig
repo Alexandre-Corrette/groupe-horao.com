@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — Groupe Horao{% endblock %}
+
+{% block meta %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block body %}
+<section class="hero">
+  <div class="wrap">
+    <span class="kicker">Espace d'administration</span>
+    <h1>Connexion</h1>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="form-wrap">
+      <form class="form-card" method="post" action="{{ path('app_login') }}">
+        {% if error %}
+          <div class="form-status err">Identifiants invalides.</div>
+        {% endif %}
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <div class="field">
+          <label for="username">Utilisateur</label>
+          <input type="text" id="username" name="_username" value="{{ last_username }}" required autocomplete="username" autofocus>
+        </div>
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="_password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
