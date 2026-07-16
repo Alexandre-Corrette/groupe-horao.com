@@ -18,7 +18,7 @@ framework:
 
     # Versioning des assets (?v=) : incrémenter à chaque modif de app.css/contact.js
     assets:
-        version: 'v1'
+        version: 'v2'
 
     # Anti-flood : 3 envois / heure / IP (fenêtre glissante)
     rate_limiter:

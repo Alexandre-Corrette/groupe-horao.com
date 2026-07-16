@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demandes de contact ({{ total }}) — Admin Groupe Horao{% endblock %}
+
+{% block meta %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block body %}
+<header>
+  <div class="wrap nav">
+    <div class="logo">Groupe <span>Horao</span> · admin</div>
+    <nav>
+      <ul>
+        <li class="hide-m"><a href="{{ path('app_home') }}">Voir le site</a></li>
+        <li class="hide-m"><a href="{{ path('app_admin_contacts_export') }}">Export CSV</a></li>
+        <li><a class="btn btn-ghost" href="{{ path('app_logout') }}">Déconnexion</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Administration</div>
+      <h2>Demandes de contact <span class="count-badge">{{ total }}</span></h2>
+    </div>
+
+    {% if contacts is empty %}
+      <p>Aucune demande pour le moment.</p>
+    {% else %}
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Motif</th>
+              <th>Nom</th>
+              <th>Société</th>
+              <th>E-mail</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in contacts %}
+              <tr>
+                <td>{{ c.id }}</td>
+                <td class="nowrap">{{ c.createdAt|date('d/m/Y H:i') }}</td>
+                <td><span class="tag tag-{{ c.motif }}">{{ c.motif }}</span></td>
+                <td>{{ c.nom }}</td>
+                <td>{{ c.societe ?? '—' }}</td>
+                <td><a href="mailto:{{ c.email }}">{{ c.email }}</a></td>
+                <td class="msg">{{ c.message }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if pages > 1 %}
+        <nav class="pagination" aria-label="Pagination">
+          {% for p in 1..pages %}
+            {% if p == page %}
+              <span class="page current">{{ p }}</span>
+            {% else %}
+              <a class="page" href="{{ path('app_admin_contacts', {page: p}) }}">{{ p }}</a>
+            {% endif %}
+          {% endfor %}
+        </nav>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
