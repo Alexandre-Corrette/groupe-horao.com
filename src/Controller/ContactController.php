@@ -34,16 +34,10 @@ final class ContactController extends AbstractController
         return $this->render('landing.html.twig');
     }
 
-    /**
-     * La racine accueillera la future landing Groupe Horao.
-     * En attendant : redirection TEMPORAIRE (302, surtout pas 301 — un 301
-     * serait mis en cache par les navigateurs et les moteurs, et gênerait la
-     * mise en place de la vraie page d'accueil).
-     */
     #[Route('/', name: 'app_home', methods: ['GET'])]
     public function home(): Response
     {
-        return $this->redirectToRoute('app_landing', [], Response::HTTP_FOUND);
+        return $this->render('home.html.twig');
     }
 
     #[Route('/contact', name: 'app_contact', methods: ['POST'])]
