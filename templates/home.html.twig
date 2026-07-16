@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Groupe Horao — Immobilier, événementiel, restauration & technologies</title>
+{% extends 'base.html.twig' %}
+
+{% block title %}Groupe Horao — Immobilier, événementiel, restauration & technologies{% endblock %}
+
+{% block meta %}
 <meta name="description" content="Groupe Horao, groupe indépendant multi-activités : immobilier, événementiel, restauration et technologies — dont Mercure-IA, l'intelligence artificielle souveraine du secteur CHR.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://groupe-horao.com/">
-
-{# Open Graph / partage social #}
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="Groupe Horao">
@@ -23,8 +20,9 @@
 <meta name="twitter:title" content="Groupe Horao — Immobilier, événementiel, restauration & technologies">
 <meta name="twitter:description" content="Un groupe indépendant, quatre pôles d'activité — et Mercure-IA, l'IA souveraine du CHR.">
 <meta name="twitter:image" content="https://groupe-horao.com/images/og-groupe-horao.png">
+{% endblock %}
 
-{# Données structurées schema.org #}
+{% block structured_data %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -49,110 +47,9 @@
   ]
 }
 </script>
+{% endblock %}
 
-<style>
-  :root{
-    --ink:#0f172a;
-    --ink-2:#475569;
-    --ink-3:#94a3b8;
-    --surface:#ffffff;
-    --surface-2:#f8fafc;
-    --line:#e2e8f0;
-    --accent:#3730a3;
-    --accent-soft:#eef2ff;
-    --accent-line:#c7d2fe;
-    --radius:14px;
-    --maxw:1080px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    color:var(--ink);background:var(--surface);
-    line-height:1.6;font-size:17px;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:var(--accent);text-decoration:none}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-
-  header{
-    position:sticky;top:0;z-index:50;
-    background:rgba(255,255,255,.85);backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .logo{font-weight:800;font-size:1.15rem;letter-spacing:-.02em;color:var(--ink)}
-  .logo span{color:var(--accent)}
-  nav ul{display:flex;gap:28px;list-style:none;align-items:center}
-  nav a{color:var(--ink-2);font-size:.92rem;font-weight:500}
-  nav a:hover{color:var(--ink)}
-  .btn{
-    display:inline-block;padding:10px 20px;border-radius:10px;
-    font-weight:600;font-size:.95rem;transition:transform .15s ease,box-shadow .15s ease;
-  }
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(55,48,163,.25)}
-  .btn-ghost{border:1px solid var(--line);color:var(--ink)}
-  .btn-ghost:hover{border-color:var(--accent-line);background:var(--accent-soft)}
-  @media(max-width:760px){nav ul li.hide-m{display:none}}
-
-  .hero{padding:96px 0 72px;text-align:center;background:
-    radial-gradient(60% 50% at 50% 0%,var(--accent-soft) 0%,transparent 70%)}
-  .kicker{
-    display:inline-block;padding:5px 14px;border-radius:999px;
-    background:var(--accent-soft);border:1px solid var(--accent-line);
-    color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.03em;
-    margin-bottom:22px;
-  }
-  h1{font-size:clamp(2.1rem,5vw,3.2rem);line-height:1.12;letter-spacing:-.03em;font-weight:800;max-width:840px;margin:0 auto 20px}
-  h1 em{font-style:normal;color:var(--accent)}
-  .sub{font-size:1.15rem;color:var(--ink-2);max-width:680px;margin:0 auto 34px}
-  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-
-  section{padding:80px 0}
-  .sec-head{max-width:680px;margin-bottom:44px}
-  .sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
-  .eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-  h2{font-size:clamp(1.6rem,3.4vw,2.2rem);letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;font-weight:750}
-  .sec-head p{color:var(--ink-2)}
-  .alt{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-
-  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-  @media(max-width:960px){.grid-4{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.grid-4{grid-template-columns:1fr}}
-  .card{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    padding:28px;display:flex;flex-direction:column;
-  }
-  .card .ico{
-    width:42px;height:42px;border-radius:11px;background:var(--accent-soft);
-    display:flex;align-items:center;justify-content:center;margin-bottom:16px;
-    color:var(--accent);font-size:1.2rem;font-weight:700;
-  }
-  .card h3{font-size:1.08rem;margin-bottom:8px;letter-spacing:-.01em}
-  .card p{font-size:.95rem;color:var(--ink-2)}
-  .card.flagship{border-color:var(--accent-line);background:linear-gradient(180deg,var(--accent-soft),var(--surface) 55%)}
-  .card .more{margin-top:auto;padding-top:14px;font-size:.9rem;font-weight:600}
-
-  .values{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  @media(max-width:860px){.values{grid-template-columns:1fr}}
-
-  .cta-band{
-    margin-top:8px;background:var(--ink);color:#fff;border-radius:var(--radius);
-    padding:38px 36px;display:flex;align-items:center;justify-content:space-between;
-    gap:24px;flex-wrap:wrap;
-  }
-  .cta-band h3{font-size:1.3rem;letter-spacing:-.01em;margin-bottom:6px}
-  .cta-band p{color:#cbd5e1;font-size:.95rem;max-width:560px}
-  .cta-band .btn{background:#fff;color:var(--ink);white-space:nowrap}
-
-  footer{border-top:1px solid var(--line);padding:44px 0;font-size:.88rem;color:var(--ink-3)}
-  .foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-  footer a{color:var(--ink-2)}
-</style>
-</head>
-<body>
-
+{% block body %}
 <header>
   <div class="wrap nav">
     <div class="logo">Groupe <span>Horao</span></div>
@@ -260,6 +157,4 @@
     </div>
   </div>
 </footer>
-
-</body>
-</html>
+{% endblock %}
